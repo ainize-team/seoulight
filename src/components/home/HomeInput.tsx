@@ -1,7 +1,15 @@
 "use client";
 
 import UpArrowIcon from "@/icons/UpArrowIcon";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+
+import WormholeConnect, {
+  WormholeConnectConfig,
+  WormholeConnectTheme
+} from "@wormhole-foundation/wormhole-connect";
+import { wormhole } from "@wormhole-foundation/sdk";
+import solana from "@wormhole-foundation/sdk/solana";
 
 interface FormValues {
   message: string;
@@ -14,9 +22,29 @@ export default function HomeInput() {
   const onSubmit = (data: FormValues) => {
     console.log(data.message);
   };
+  const config: WormholeConnectConfig = {
+    network: "Testnet",
+    chains: ["Solana", "Sepolia"],
+    ui: {
+      title: "ArbitUumSepoliaI CoBasenepnei TS Demo"
+    }
+  };
+
+  const theme: WormholeConnectTheme = {
+    mode: "dark",
+    primary: "#78c4b6"
+  };
+  const init = async () => {
+    const wh = await wormhole("Testnet", [solana]);
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <div className="w-full">
+      <WormholeConnect theme={theme} />
       <div className="relative h-[104px] overflow-hidden rounded-[10px] border border-[#dfdfdf] bg-white">
         <input
           type="text"
