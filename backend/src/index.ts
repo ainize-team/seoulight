@@ -1,12 +1,16 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import { sleep } from "@anthropic-ai/sdk/core";
 // import Agent from "hyperagents/src/agent/Agent";
 // import Graph from "hyperagents/src/Graph";
 // import InMemoryMemory from "hyperagents/src/memory/InMemoryMemory";
 // import GraphTask from "hyperagents/src/GraphTask";
 // import { AgentConfigs } from "hyperagents/src/agent/AgentConfig";
 // import { LLMType, MemoryType } from "hyperagents/src/type";
+import { chatSSE } from "./chat-sse";
+import { payment } from "./payment";
+import { paymentMock } from "./payment.mock";
 
 // 환경 변수 로드
 dotenv.config();
@@ -18,27 +22,9 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/chat-sse", (req: Request, res: Response) => {
-  // SSE 응답 헤더 설정
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
-  // 클라이언트가 보낸 메시지 추출
-  const userMessage = req.body.message;
-  console.log("Received message:", userMessage);
-
-  // 응답 데이터: { type: string, content: string }
-  const responseData = { type: "text", content: `Echo: ${userMessage}` };
-
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-
-  // 클라이언트 연결 종료 시 응답 스트림 종료
-  req.on("close", () => {
-    res.end();
-  });
-});
+app.post("/api/chat-sse", chatSSE);
+app.post("/api/payment-mock", paymentMock);
+app.post("/api/payment", payment);
 
 // // 기본 라우트
 // app.get("/api/hyperagents", (req: Request, res: Response) => {
