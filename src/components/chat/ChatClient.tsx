@@ -42,7 +42,7 @@ export default function ChatClient() {
     }
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/hyperagents", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
