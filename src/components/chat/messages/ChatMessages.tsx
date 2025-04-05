@@ -4,17 +4,17 @@ import { useEffect, useRef } from "react";
 
 import ChatMessage from "./ChatMessage";
 import LoadingText from "../LoadingText";
+import useChatStatus from "@/stores/chatStatus";
 
 interface ChatMessagesProps {
   messages: any[];
-  isLoading: boolean;
 }
 
-export default function ChatMessages({
-  messages,
-  isLoading
-}: ChatMessagesProps) {
+export default function ChatMessages({ messages }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const { isLoading } = useChatStatus((state) => ({
+    isLoading: state.isLoading
+  }));
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import StopIcon from "@/icons/StopIcon";
 import UpArrowIcon from "@/icons/UpArrowIcon";
 import { Sender } from "@/types/MessageType";
+import useChatStatus from "@/stores/chatStatus";
 
 interface FormValues {
   message: string;
@@ -17,9 +17,14 @@ interface ChatInputProps {
 
 export default function ChatInput({ handleMessageAction }: ChatInputProps) {
   const { register, handleSubmit, reset, watch } = useForm<FormValues>();
-  const [isStreaming, setIsStreaming] = useState<boolean>(false);
-
   const message = watch("message") || "";
+  const { isLoading, setIsLoading, isStreaming, setIsStreaming } =
+    useChatStatus((state) => ({
+      isLoading: state.isLoading,
+      setIsLoading: state.setIsLoading,
+      isStreaming: state.isStreaming,
+      setIsStreaming: state.setIsStreaming
+    }));
 
   const onSubmit = (data: FormValues) => {
     handleMessageAction(data.message, Sender.USER);
@@ -36,8 +41,9 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
           {...register("message", { required: true })}
           onKeyDown={(e) => {
             if (e.nativeEvent.isComposing) return;
-            if (e.key === "Enter") {
-              handleSubmit(onSubmit)();
+            if (e.key === "Enter" && message.trim()) {
+              handleMessageAction(message, Sender.USER);
+              reset();
             }
           }}
         />
@@ -51,11 +57,13 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
                 : "bg-[#363534] hover:bg-gray-800"
           }`}
           onClick={(e) => {
-            e.preventDefault();
             if (isStreaming) {
-              //   abortController?.abort();
-              //   setIsLoading(false);
+              // abortController?.abort();
+              setIsLoading(false);
               setIsStreaming(false);
+            } else if (message.trim()) {
+              handleMessageAction(message, Sender.USER);
+              reset();
             }
           }}
         >

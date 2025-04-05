@@ -2,12 +2,21 @@
 
 import { useState } from "react";
 
-import ChatMessages from "./messages/ChatMessages";
-import { BotMessageType, MessageType, Sender } from "@/types/MessageType";
 import ChatInput from "./ChatInput";
+import ChatMessages from "./messages/ChatMessages";
+import { MessageType, Sender } from "@/types/MessageType";
+import useChatStatus from "@/stores/chatStatus";
+import { ChatProvider } from "@/contexts/ChatContext";
 
 export default function ChatClient() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isLoading, setIsLoading, isStreaming, setIsStreaming } =
+    useChatStatus((state) => ({
+      isLoading: state.isLoading,
+      setIsLoading: state.setIsLoading,
+      isStreaming: state.isStreaming,
+      setIsStreaming: state.setIsStreaming
+    }));
+
   const [messages, setMessages] = useState<MessageType[]>([
     {
       id: "1",
@@ -21,7 +30,7 @@ export default function ChatClient() {
     setMessages((prev) => [...prev, newMessage]);
   };
 
-  const handleMessage = (message: string, sender: Sender) => {
+  const handleMessageAction = async (message: string, sender: Sender) => {
     const newMessage: MessageType = {
       id: "2",
       sender: Sender.BOT,
@@ -31,11 +40,13 @@ export default function ChatClient() {
     addMessage(newMessage);
   };
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <div className="flex w-full flex-1 flex-col overflow-hidden">
-        <ChatMessages messages={messages} isLoading={isLoading} />
-        <ChatInput handleMessageAction={handleMessage} />
+    <ChatProvider handleMessageAction={handleMessageAction}>
+      <div className="flex min-h-screen w-full flex-col">
+        <div className="flex w-full flex-1 flex-col overflow-hidden">
+          <ChatMessages messages={messages} />
+          <ChatInput handleMessageAction={handleMessageAction} />
+        </div>
       </div>
-    </div>
+    </ChatProvider>
   );
 }
