@@ -11,11 +11,11 @@ interface FormValues {
   message: string;
 }
 
-interface IChatInput {
+interface ChatInputProps {
   handleMessageAction: (message: string, sender: Sender) => void;
 }
 
-export default function ChatInput({ handleMessageAction }: IChatInput) {
+export default function ChatInput({ handleMessageAction }: ChatInputProps) {
   const { register, handleSubmit, reset, watch } = useForm<FormValues>();
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
 
