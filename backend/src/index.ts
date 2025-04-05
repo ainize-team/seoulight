@@ -9,6 +9,8 @@ import { sleep } from "@anthropic-ai/sdk/core";
 // import { AgentConfigs } from "hyperagents/src/agent/AgentConfig";
 // import { LLMType, MemoryType } from "hyperagents/src/type";
 import { chatSSE } from "./chat-sse";
+import { payment } from "./payment";
+import { paymentMock } from "./payment.mock";
 
 // 환경 변수 로드
 dotenv.config();
@@ -21,6 +23,8 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/api/chat-sse", chatSSE);
+app.post("/api/payment-mock", paymentMock);
+app.post("/api/payment", payment);
 
 // // 기본 라우트
 // app.get("/api/hyperagents", (req: Request, res: Response) => {

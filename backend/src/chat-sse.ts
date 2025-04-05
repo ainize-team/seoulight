@@ -8,7 +8,7 @@ export const chatSSE = async (req: Request, res: Response) => {
   console.log("Received message:", userMessage);
 
   res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}` })}\n\n`
+    `data: ${JSON.stringify({ type: "text", sender: "master", content: `Echo: ${userMessage}` })}\n\n`
   );
   res.end();
   req.on("close", () => {
