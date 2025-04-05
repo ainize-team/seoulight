@@ -21,7 +21,8 @@ export default function ChatClient() {
   const {
     messages,
     addMessage: addStoreMessage,
-    updateBotMessage
+    updateBotMessage,
+    resetMessages
   } = useMessages();
 
   // Load initial message from sessionStorage on component mount
@@ -191,6 +192,9 @@ export default function ChatClient() {
     };
 
     initializeChat();
+    return () => {
+      resetMessages();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // Dependencies like addMessage, handleMessageAction should be added to the array
   // But kept empty to ensure it runs only once on initialization

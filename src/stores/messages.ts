@@ -15,6 +15,7 @@ type Action = {
   setMessages: (
     value: MessageType[] | ((prev: MessageType[]) => MessageType[])
   ) => void;
+  resetMessages: () => void;
   addMessage: (message: MessageType) => void;
   updateBotMessage: (id: string, content: string, isComplete: boolean) => void;
 };
@@ -28,6 +29,11 @@ const useMessages = create(
           messages: typeof value === "function" ? value(state.messages) : value
         };
       });
+    },
+    resetMessages: () => {
+      set(() => ({
+        messages: []
+      }));
     },
     addMessage: (message: MessageType) => {
       set((state) => ({
