@@ -1,8 +1,8 @@
 "use client";
 
-import UpArrowIcon from "@/icons/UpArrowIcon";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import Image from "next/image";
 
 import WormholeConnect, {
   WormholeConnectConfig,
@@ -10,6 +10,7 @@ import WormholeConnect, {
 } from "@wormhole-foundation/wormhole-connect";
 import { wormhole } from "@wormhole-foundation/sdk";
 import solana from "@wormhole-foundation/sdk/solana";
+import UpArrowIcon from "@/icons/UpArrowIcon";
 
 interface FormValues {
   message: string;
@@ -59,7 +60,20 @@ export default function HomeInput() {
 
   return (
     <div className="w-full">
-      <WormholeConnect config={config} theme={theme} />
+      {/* <WormholeConnect config={config} theme={theme} /> */}
+      <p className="justify-center py-4 text-center font-['Noto_Sans_KR'] text-sm font-medium leading-relaxed text-[#21242e]">
+        SeouLight
+      </p>
+      <Image
+        src="/images/mainImage.png"
+        alt="logo"
+        width={82}
+        height={96}
+        className="mx-auto"
+      />
+      <p className="mb-8 mt-3 justify-start text-center font-['Pretendard'] text-lg font-medium leading-relaxed text-[#302f2a]">
+        See more than sights. Feel the culture
+      </p>
       <div className="relative h-[104px] overflow-hidden rounded-[10px] border border-[#dfdfdf] bg-white">
         <input
           type="text"
