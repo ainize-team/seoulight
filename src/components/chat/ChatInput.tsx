@@ -38,12 +38,12 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
 
     try {
       // localhost:8080 백엔드 서버 API 호출
-      const response = await fetch("http://localhost:8080/", {
-        method: "POST",
+      console.log("🔥🔥🔥🔥🔥", data.message);
+      const response = await fetch("http://localhost:8080/api/hyperagents", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: data.message })
+        }
       });
 
       if (!response.ok) {
