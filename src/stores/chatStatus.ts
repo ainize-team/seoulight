@@ -13,8 +13,8 @@ type Action = {
 
 const useChatStatus = create(
   immer<Status & Action>((set) => ({
-    isLoading: true,
-    isStreaming: true,
+    isLoading: false,
+    isStreaming: false,
     setIsLoading: (value: boolean) => {
       set({
         isLoading: value

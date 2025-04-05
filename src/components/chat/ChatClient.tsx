@@ -39,6 +39,7 @@ export default function ChatClient() {
     };
     addMessage(newMessage);
   };
+
   return (
     <ChatProvider handleMessageAction={handleMessageAction}>
       <div className="flex min-h-screen w-full flex-col">
