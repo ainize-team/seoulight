@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import { sleep } from "@anthropic-ai/sdk/core";
 // import Agent from "hyperagents/src/agent/Agent";
 // import Graph from "hyperagents/src/Graph";
 // import InMemoryMemory from "hyperagents/src/memory/InMemoryMemory";
@@ -18,7 +19,7 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/chat-sse", (req: Request, res: Response) => {
+app.post("/api/chat-sse", async (req: Request, res: Response) => {
   // SSE 응답 헤더 설정
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -28,27 +29,42 @@ app.post("/api/chat-sse", (req: Request, res: Response) => {
   const userMessage = req.body.message;
   console.log("Received message:", userMessage);
 
-  // 응답 데이터: { type: string, content: string }
-  const responseData = { type: "text", content: `Echo: ${userMessage}` };
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}1` })}\n\n`
+  );
+  await sleep(1000);
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}2` })}\n\n`
+  );
+  await sleep(1000);
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}3` })}\n\n`
+  );
+  await sleep(1000);
 
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
-  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
-  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}4` })}\n\n`
+  );
+  await sleep(1000);
 
-  // 클라이언트 연결 종료 시 응답 스트림 종료
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}5` })}\n\n`
+  );
+  await sleep(1000);
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}6` })}\n\n`
+  );
+  await sleep(1000);
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}7` })}\n\n`
+  );
+  await sleep(1000);
+  res.write(
+    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}8` })}\n\n`
+  );
+  await sleep(1000);
+
+  res.end();
   req.on("close", () => {
     res.end();
   });
