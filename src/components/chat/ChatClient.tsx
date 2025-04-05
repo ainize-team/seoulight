@@ -52,7 +52,6 @@ export default function ChatClient() {
             // Create initial empty message
             await handleMessageAction("", Sender.BOT, messageId, false);
 
-            console.log("🔥🔥🔥🔥🔥", savedMessage);
             // Send message to server
             const response = await fetch(
               `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/chat-sse`,
@@ -82,6 +81,9 @@ export default function ChatClient() {
                 while (true) {
                   const { done, value } = await reader.read();
                   if (done) {
+                    console.log(
+                      `[SSE CONNECTION CLOSED] Total chunks received: ${chunkCount}`
+                    );
                     break;
                   }
 
@@ -89,11 +91,14 @@ export default function ChatClient() {
 
                   // Convert binary data to text
                   const chunk = decoder.decode(value, { stream: true });
-                  console.log("[SSE 청크]", chunk);
+                  console.log(`[SSE CHUNK ${chunkCount}]`, chunk);
 
                   // Parse SSE data from chunk (data: {...}\n\n format)
                   const dataLines = chunk.split("\n\n");
-                  console.log("[SSE 청크 데이터 라인 수]", dataLines.length);
+                  console.log(
+                    `[SSE CHUNK ${chunkCount} DATA LINES]`,
+                    dataLines.length
+                  );
 
                   // Store new content from this chunk
                   let newContent = "";
@@ -102,18 +107,18 @@ export default function ChatClient() {
                     if (line.startsWith("data: ")) {
                       try {
                         const dataContent = line.substring(6);
-                        console.log("[SSE 데이터]", dataContent);
+                        console.log("[SSE DATA]", dataContent);
 
                         const eventData = JSON.parse(dataContent);
-                        console.log("[SSE 파싱된 데이터]", eventData);
+                        console.log("[SSE PARSED DATA]", eventData);
 
                         // Extract content based on server response structure
                         const content = eventData.content || "";
-                        console.log("[SSE 응답 컨텐츠]", content);
+                        console.log("[SSE RESPONSE CONTENT]", content);
 
                         // Extract sender information if available
                         lastSender = eventData.sender || Sender.BOT;
-                        console.log("[SSE 응답 발신자]", lastSender);
+                        console.log("[SSE RESPONSE SENDER]", lastSender);
 
                         // Store content from this line
                         newContent = content;
@@ -136,14 +141,39 @@ export default function ChatClient() {
                   }
                 }
 
-                // Mark message as complete after streaming ends
-                if (accumulatedText) {
-                  await handleMessageAction(
-                    accumulatedText,
-                    lastSender, // Use the tracked sender
-                    messageId,
-                    true
+                console.log(
+                  `[SSE COMPLETED] Total chunks received: ${chunkCount}`
+                );
+
+                // Only mark the message as complete if we actually received chunks
+                // and if the message isn't already complete
+                if (accumulatedText && chunkCount > 0) {
+                  const existingMessage = messages.find(
+                    (msg: any) => msg.id === messageId
                   );
+                  const isAlreadyComplete =
+                    existingMessage &&
+                    existingMessage.sender === Sender.BOT &&
+                    "isComplete" in existingMessage &&
+                    existingMessage.isComplete === true;
+
+                  if (!isAlreadyComplete) {
+                    console.log(
+                      "[COMPLETING MESSAGE] Updating to mark as complete:",
+                      messageId
+                    );
+                    await handleMessageAction(
+                      accumulatedText,
+                      lastSender,
+                      messageId,
+                      true // Mark as complete
+                    );
+                  } else {
+                    console.log(
+                      "[SKIPPING COMPLETION] Message already complete:",
+                      messageId
+                    );
+                  }
                 } else {
                   // Use default response if no actual response
                   const defaultAnswer =
@@ -212,8 +242,9 @@ export default function ChatClient() {
     if (messageExists) {
       // Update message if ID exists
       updateBotMessage(id, content, isComplete);
-    } else {
-      // Add new message if ID doesn't exist
+    } else if (!isComplete) {
+      // Only add new message if ID doesn't exist AND the message is not complete
+      console.log(`[ADD NEW MESSAGE] id=${id}, isComplete=${isComplete}`);
       const botResponse: MessageType = {
         id,
         sender: Sender.BOT,
@@ -221,6 +252,10 @@ export default function ChatClient() {
         isComplete
       };
       addMessage(botResponse);
+    } else {
+      console.log(
+        `[SKIPPED ADDING] Complete message with no existing ID: ${id}`
+      );
     }
   };
 
@@ -230,6 +265,10 @@ export default function ChatClient() {
     id?: string,
     isComplete: boolean = true
   ) => {
+    console.log(
+      `[HANDLE MESSAGE] sender=${sender}, id=${id}, isComplete=${isComplete}, message=${message.substring(0, 20)}...`
+    );
+
     if (sender === Sender.USER) {
       const userMessage: MessageType = {
         id: Date.now().toString(),
@@ -242,17 +281,36 @@ export default function ChatClient() {
 
     // Handle bot message
     if (id) {
+      // Check if we're trying to add a complete message that already exists
+      const existingMessage = messages.find((msg: any) => msg.id === id);
+
+      // Check if the existing message is complete (only for bot messages)
+      const isExistingComplete =
+        existingMessage &&
+        existingMessage.sender === Sender.BOT &&
+        "isComplete" in existingMessage &&
+        existingMessage.isComplete === true;
+
+      if (isComplete && isExistingComplete) {
+        console.log(`[DUPLICATE AVOIDED] Message ${id} is already complete`);
+        return; // Skip updating if already complete
+      }
+
       // Update existing message (streaming)
+      console.log(`[UPDATE MESSAGE] id=${id}, isComplete=${isComplete}`);
       updateMessage(id, message, isComplete);
-    } else {
-      // Add new bot message
+    } else if (!isComplete) {
+      // Only add new bot message if NOT complete
       const botResponse: MessageType = {
         id: Date.now().toString(),
         sender: Sender.BOT,
         contents: { content: message },
         isComplete
       };
+      console.log(`[ADD NEW MESSAGE] No ID, isComplete=${isComplete}`);
       addMessage(botResponse);
+    } else {
+      console.log(`[SKIPPED ADDING] Complete message with no ID`);
     }
   };
 
