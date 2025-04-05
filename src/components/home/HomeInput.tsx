@@ -24,27 +24,42 @@ export default function HomeInput() {
   };
   const config: WormholeConnectConfig = {
     network: "Testnet",
-    chains: ["Solana", "Sepolia"],
+    chains: [
+      "Solana",
+      "Sepolia",
+      "BaseSepolia",
+      "ArbitrumSepolia",
+      "Ethereum",
+      "OptimismSepolia"
+    ],
+    rpcs: {
+      Sepolia: process.env.NEXT_PUBLIC_ETH_RPC,
+      Ethereum: process.env.NEXT_PUBLIC_ETH_RPC,
+      Solana: process.env.NEXT_PUBLIC_SOL_RPC
+    },
     ui: {
       title: "ArbitUumSepoliaI CoBasenepnei TS Demo"
     }
   };
 
   const theme: WormholeConnectTheme = {
-    mode: "dark",
+    mode: "light",
     primary: "#78c4b6"
   };
   const init = async () => {
     const wh = await wormhole("Testnet", [solana]);
+    console.log(wh);
   };
 
   useEffect(() => {
     init();
+    console.log(process.env.NEXT_PUBLIC_ETH_RPC);
+    console.log(process.env.NEXT_PUBLIC_SOL_RPC);
   }, []);
 
   return (
     <div className="w-full">
-      <WormholeConnect theme={theme} />
+      <WormholeConnect config={config} theme={theme} />
       <div className="relative h-[104px] overflow-hidden rounded-[10px] border border-[#dfdfdf] bg-white">
         <input
           type="text"
