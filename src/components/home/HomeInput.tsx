@@ -59,7 +59,7 @@ export default function HomeInput() {
 
   return (
     <div className="w-full">
-      <WormholeConnect config={config} theme={theme} />
+      {/* <WormholeConnect config={config} theme={theme} /> */}
       <div className="relative h-[104px] overflow-hidden rounded-[10px] border border-[#dfdfdf] bg-white">
         <input
           type="text"

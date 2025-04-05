@@ -20,7 +20,6 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.6.3",
-    "hyperagents": "file:hyperagents",
     "immer": "^10.1.1",
     "lucide-react": "^0.487.0",
     "next": "15.1.6",
