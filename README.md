@@ -24,8 +24,9 @@ Seoulight combines AI-powered local expertise with Solana blockchain technology 
 - **📡 Model Context Protocol (MCP)**: Real-time access to accurate local information
 - **🔗 Multi-chain Compatibility**: Flexibility through Wormhole integration
 
-<img width="360" alt="main" src="https://github.com/user-attachments/assets/d3c3f4d4-0de0-4968-a49e-3fa59b4390d5" />
-
+<p align="center">
+  <img width="360" alt="main" src="https://github.com/user-attachments/assets/d3c3f4d4-0de0-4968-a49e-3fa59b4390d5" />
+</p>
 
 ---
 
