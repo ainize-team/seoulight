@@ -17,10 +17,10 @@ export default function HomeInput() {
 
   return (
     <div className="w-full">
-      <div className="relative bg-white rounded-[10px] border border-[#dfdfdf] h-[104px] overflow-hidden">
+      <div className="relative h-[104px] overflow-hidden rounded-[10px] border border-[#dfdfdf] bg-white">
         <input
           type="text"
-          className="absolute inset-0 w-full h-full pl-4 pr-12 pt-2 pb-3 text-[15px] text-[#302f2a] outline-none placeholder:text-[#8c8c8c] placeholder:font-normal"
+          className="absolute inset-0 h-full w-full pb-3 pl-4 pr-12 pt-2 text-[15px] text-[#302f2a] outline-none placeholder:font-normal placeholder:text-[#8c8c8c]"
           placeholder="무엇이든 물어보세요."
           {...register("message")}
           onKeyDown={(e) => {
@@ -30,11 +30,18 @@ export default function HomeInput() {
           }}
         />
         <button
-          className={`absolute top-1/2 right-3 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full border border-transparent ${
-            message.trim() ? "bg-[#363534] hover:bg-gray-800" : "bg-[#e8e7e6] text-gray-500"
+          className={`absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 transform items-center justify-center rounded-full border border-transparent ${
+            message.trim()
+              ? "bg-[#363534] hover:bg-gray-800"
+              : "bg-[#e8e7e6] text-gray-500"
           }`}
-          onClick={handleSubmit(onSubmit)}>
-          {message.trim() ? <UpArrowIcon color="#FFF" /> : <UpArrowIcon color="#2F333B" />}
+          onClick={handleSubmit(onSubmit)}
+        >
+          {message.trim() ? (
+            <UpArrowIcon color="#FFF" />
+          ) : (
+            <UpArrowIcon color="#2F333B" />
+          )}
         </button>
       </div>
     </div>
