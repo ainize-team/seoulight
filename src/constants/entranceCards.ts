@@ -1,4 +1,4 @@
-const entranceCards = [
+export const entranceCards = [
   {
     title: "럭셔리한 인생샷은 여기에서",
     category: "Experience",
