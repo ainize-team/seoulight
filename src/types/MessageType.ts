@@ -1,6 +1,6 @@
 export type BotMessageType = {
   id: string;
-  sender: MessageType.BOT;
+  sender: Sender.BOT;
   contents: { content: string };
   photoCards?: PhotoCard[];
   embedContents?: string[];
@@ -10,7 +10,7 @@ export type BotMessageType = {
 
 export type UserMessageType = {
   id?: string;
-  sender: MessageType.USER;
+  sender: Sender.USER;
   message: string;
 };
 
@@ -32,9 +32,9 @@ export interface SuggestedQuestion {
   updated_at: Date;
 }
 
-export type Message = UserMessageType | BotMessageType;
+export type MessageType = UserMessageType | BotMessageType;
 
-export enum MessageType {
+export enum Sender {
   BOT = "BOT",
   USER = "USER"
 }

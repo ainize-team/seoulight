@@ -1,7 +1,7 @@
 "use client";
 
-import { UserMessageType } from "@/types/MessageType";
+import { UserSender } from "@/types/MessageType";
 
-export default function UserMessage({ message }: { message: UserMessageType }) {
+export default function UserMessage({ message }: { message: UserSender }) {
   return <div>UserMessage</div>;
 }

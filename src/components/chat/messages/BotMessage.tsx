@@ -1,9 +1,9 @@
 "use client";
 
-import { BotMessageType } from "@/types/MessageType";
+import { BotSender } from "@/types/MessageType";
 
 interface BotMessageProps {
-  message: BotMessageType;
+  message: BotSender;
 }
 
 export default function BotMessage({ message }: BotMessageProps) {
