@@ -42,7 +42,7 @@ export default function ChatClient() {
     }
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/hyperagents", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -64,14 +64,14 @@ export default function ChatClient() {
         isComplete: true
       };
       addMessage(botResponse);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error occurred:", error);
       // 오류 발생 시 오류 메시지 표시
       const errorMessage: MessageType = {
         id: Date.now().toString(),
         sender: Sender.BOT,
         contents: {
-          content: "죄송합니다. 요청을 처리하는 중 오류가 발생했습니다."
+          content: `죄송합니다. ${error.message || "요청을 처리하는 중 오류가 발생했습니다."}`
         },
         isComplete: true
       };

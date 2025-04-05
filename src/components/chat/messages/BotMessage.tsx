@@ -11,7 +11,7 @@ export default function BotMessage({ message }: BotMessageProps) {
     <div className="flex w-full flex-col">
       <div className="flex items-center">
         <Image
-          src="/images/agent-profile/뮤지.png"
+          src="/images/agent-profile/Muzie.png"
           alt="Agent profile"
           width={32}
           height={32}

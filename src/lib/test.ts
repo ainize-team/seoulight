@@ -1,5 +1,12 @@
 import dotenv from "dotenv";
+import Agent from "hyperagents/src/agent/Agent";
+import Graph from "hyperagents/src/Graph";
+import InMemoryMemory from "hyperagents/src/memory/InMemoryMemory";
+import GraphTask from "hyperagents/src/GraphTask";
+import foodieConfig from "../../hyperagents/agentConfigs/Foodie.json";
+import { AgentConfigs } from "hyperagents/src/agent/AgentConfig";
 dotenv.config();
+console.log("🔥 foodieConfig", foodieConfig);
 console.log("🔥 Starting test script");
 console.log(
   "🔥 GOOGLE_API_KEY:",
@@ -9,31 +16,9 @@ console.log(
 // Use dynamic imports to load the hyperagents modules
 (async () => {
   try {
-    // Import the necessary modules
-    const Graph = (await import("../../hyperagents/src/Graph")).default;
-    const Agent = (await import("../../hyperagents/src/agent/Agent")).default;
-    const GraphTask = (await import("../../hyperagents/src/GraphTask")).default;
-    const InMemoryMemory = (
-      await import("../../hyperagents/src/memory/InMemoryMemory")
-    ).default;
-    const { LLMType, MemoryType } = await import("../../hyperagents/src/type");
-
-    // Create an agent using Gemini instead of GPT4O
-    const foodieConfig = {
-      name: "foodie - local food explorer",
-      systemPrompt:
-        "You are foodie, a fun, friendly, and flavorful agent who talks about food like you're chatting with an old friend.",
-      llm: LLMType.GEMINI_1_5_FLASH, // Changed to Gemini
-      publicDesc:
-        "foodie - your personal curator for flavorful, fun, and unforgettable food experiences",
-      memoryType: MemoryType.inMemory,
-      llmApiKey: process.env.GOOGLE_API_KEY, // Use Google API key
-      validIntents: ["looking for food recommendations"]
-    };
-
     console.log("Creating foodie agent with config:", foodieConfig);
 
-    const foodie = new Agent(foodieConfig);
+    const foodie = new Agent({...foodieConfig,       llmApiKey: process.env.GOOGLE_API_KEY} as AgentConfigs);
 
     // Create the graph
     const graph = new Graph();
