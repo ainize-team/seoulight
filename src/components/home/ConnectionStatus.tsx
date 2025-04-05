@@ -42,7 +42,7 @@ export default function ConnectionStatus() {
   return (
     <div
       className={cn(
-        "absolute right-0 size-2 rounded-full",
+        "size-2 rounded-full",
         serverStatus === "connected" ? "bg-green-300" : "bg-red-400"
       )}
     />
