@@ -1,5 +1,5 @@
-import HomeInput from "@/components/home/client-components/HomeInput";
-import EntranceCard from "@/components/home/client-components/EntranceCard";
+import HomeInput from "@/components/home/HomeInput";
+import EntranceCard from "@/components/home/EntranceCard";
 import { entranceCards } from "@/constants/entranceCards";
 
 export default function HomePage() {
