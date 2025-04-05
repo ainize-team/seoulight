@@ -13,6 +13,7 @@
         "@typescript-eslint/ban-ts-comment": "off",
         "react-hooks/exhaustive-deps": 0,
         "react/display-name": 0,
-        "@next/next/no-img-element": 0
+        "@next/next/no-img-element": 0,
+        "react/no-unescaped-entities": "off"
     }
 }

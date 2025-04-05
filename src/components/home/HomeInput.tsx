@@ -64,7 +64,7 @@ export default function HomeInput() {
         <input
           type="text"
           className="absolute inset-0 h-full w-full pb-3 pl-4 pr-12 pt-2 text-[15px] text-[#302f2a] outline-none placeholder:font-normal placeholder:text-[#8c8c8c]"
-          placeholder="무엇이든 물어보세요."
+          placeholder="Ask anything. I’ll light the way."
           {...register("message")}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
