@@ -33,6 +33,20 @@ app.post("/api/chat-sse", (req: Request, res: Response) => {
 
   // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
   res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
+  // SSE 데이터 전송: "data: " 접두사와 두 개의 개행 문자로 구분
+  res.write(`data: ${JSON.stringify(responseData)}\n\n`);
 
   // 클라이언트 연결 종료 시 응답 스트림 종료
   req.on("close", () => {
