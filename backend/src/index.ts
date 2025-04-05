@@ -8,6 +8,7 @@ import { sleep } from "@anthropic-ai/sdk/core";
 // import GraphTask from "hyperagents/src/GraphTask";
 // import { AgentConfigs } from "hyperagents/src/agent/AgentConfig";
 // import { LLMType, MemoryType } from "hyperagents/src/type";
+import { chatSSE } from "./chat-sse";
 
 // 환경 변수 로드
 dotenv.config();
@@ -19,56 +20,7 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/chat-sse", async (req: Request, res: Response) => {
-  // SSE 응답 헤더 설정
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
-  // 클라이언트가 보낸 메시지 추출
-  const userMessage = req.body.message;
-  console.log("Received message:", userMessage);
-
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}1` })}\n\n`
-  );
-  await sleep(1000);
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}2` })}\n\n`
-  );
-  await sleep(1000);
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}3` })}\n\n`
-  );
-  await sleep(1000);
-
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}4` })}\n\n`
-  );
-  await sleep(1000);
-
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}5` })}\n\n`
-  );
-  await sleep(1000);
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}6` })}\n\n`
-  );
-  await sleep(1000);
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}7` })}\n\n`
-  );
-  await sleep(1000);
-  res.write(
-    `data: ${JSON.stringify({ type: "text", content: `Echo: ${userMessage}8` })}\n\n`
-  );
-  await sleep(1000);
-
-  res.end();
-  req.on("close", () => {
-    res.end();
-  });
-});
+app.post("/api/chat-sse", chatSSE);
 
 // // 기본 라우트
 // app.get("/api/hyperagents", (req: Request, res: Response) => {
