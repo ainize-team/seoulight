@@ -1,6 +1,6 @@
 export type BotMessageType = {
   id: string;
-  sender: Sender.BOT;
+  sender: string;
   contents: { content: string };
   photoCards?: PhotoCard[];
   embedContents?: string[];
@@ -10,7 +10,7 @@ export type BotMessageType = {
 
 export type UserMessageType = {
   id?: string;
-  sender: Sender.USER;
+  sender: string;
   message: string;
 };
 

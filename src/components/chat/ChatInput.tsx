@@ -15,7 +15,7 @@ interface FormValues {
 interface ChatInputProps {
   handleMessageAction: (
     message: string,
-    sender: Sender,
+    sender: string,
     id?: string,
     isComplete?: boolean
   ) => Promise<void>;
@@ -77,14 +77,17 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
         "Which one sounds interesting? Let me know if you need more details!"
       ];
 
-      const response = await fetch("http://localhost:8080/api/chat-sse", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: data.message }),
-        signal: abortController.signal
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/chat-sse`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: data.message }),
+          signal: abortController.signal
+        }
+      );
 
       requestStarted = true;
 

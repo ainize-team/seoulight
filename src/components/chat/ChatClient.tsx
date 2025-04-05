@@ -51,9 +51,10 @@ export default function ChatClient() {
             // Create initial empty message
             await handleMessageAction("", Sender.BOT, messageId, false);
 
+            console.log("🔥🔥🔥🔥🔥", savedMessage);
             // Send message to server
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT || "http://localhost:8080"}/api/chat-sse`,
+              `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/chat-sse`,
               {
                 method: "POST",
                 headers: {
@@ -86,9 +87,11 @@ export default function ChatClient() {
 
                   // Convert binary data to text
                   const chunk = decoder.decode(value, { stream: true });
+                  console.log("[SSE 청크]", chunk);
 
                   // Parse SSE data from chunk (data: {...}\n\n format)
                   const dataLines = chunk.split("\n\n");
+                  console.log("[SSE 청크 데이터 라인 수]", dataLines.length);
 
                   // Store new content from this chunk
                   let newContent = "";
@@ -97,34 +100,14 @@ export default function ChatClient() {
                     if (line.startsWith("data: ")) {
                       try {
                         const dataContent = line.substring(6);
+                        console.log("[SSE 데이터]", dataContent);
+
                         const eventData = JSON.parse(dataContent);
+                        console.log("[SSE 파싱된 데이터]", eventData);
 
                         // Extract content based on server response structure
                         let content = eventData.content || "";
-
-                        // Handle "Echo:" response
-                        if (content.startsWith("Echo:")) {
-                          // Extract user query (after "Echo:")
-                          const userQuery = content.substring(6).trim();
-
-                          // Mock responses
-                          if (
-                            userQuery.includes("hello") ||
-                            userQuery.includes("who")
-                          ) {
-                            content =
-                              "Hello! I'm an AI assistant that provides information about Seoul. Feel free to ask about restaurants, tourist attractions, or anything related to Seoul!";
-                          } else if (
-                            userQuery.includes("restaurant") ||
-                            userQuery.includes("food")
-                          ) {
-                            content =
-                              "Seoul has a diverse range of restaurants. Particularly, Gangnam area has trendy cafes and restaurants, while traditional Korean cuisine can be enjoyed around Jongno and Gwanghwamun.";
-                          } else {
-                            content =
-                              "Seoul is the capital of South Korea, where history and modern culture coexist. It offers various attractions and culinary experiences. What would you like to know more about?";
-                          }
-                        }
+                        console.log("[SSE 응답 컨텐츠]", content);
 
                         // Store content from this line
                         newContent = content;
@@ -234,7 +217,7 @@ export default function ChatClient() {
 
   const handleMessageAction = async (
     message: string,
-    sender: Sender,
+    sender: string,
     id?: string,
     isComplete: boolean = true
   ) => {

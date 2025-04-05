@@ -37,7 +37,7 @@ const useMessages = create(
     updateBotMessage: (id, content, isComplete) => {
       set((state) => {
         const updatedMessages = state.messages.map((message) => {
-          if (message.id === id && message.sender === Sender.BOT) {
+          if (message.id === id && message.sender !== Sender.USER) {
             return {
               ...message,
               contents: { content },
