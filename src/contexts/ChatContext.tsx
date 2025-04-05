@@ -1,11 +1,12 @@
 "use client";
 
+import { Sender } from "@/types/MessageType";
 import React, { createContext, useContext } from "react";
 
 interface ChatContextValue {
   handleMessageAction: (
     text: string,
-    sender: string,
+    sender: Sender,
     id?: string,
     isComplete?: boolean
   ) => Promise<void>;
@@ -23,7 +24,7 @@ export const useChatContext = () => useContext(ChatContext);
 interface ChatProviderProps {
   handleMessageAction: (
     text: string,
-    sender: string,
+    sender: Sender,
     id?: string,
     isComplete?: boolean
   ) => Promise<void>;

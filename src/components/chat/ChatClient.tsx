@@ -75,6 +75,7 @@ export default function ChatClient() {
                 const decoder = new TextDecoder();
                 let accumulatedText = "";
                 let chunkCount = 0;
+                let lastSender = Sender.BOT; // Track the last sender for the final message
 
                 // Stream reading loop
                 while (true) {
@@ -106,8 +107,12 @@ export default function ChatClient() {
                         console.log("[SSE 파싱된 데이터]", eventData);
 
                         // Extract content based on server response structure
-                        let content = eventData.content || "";
+                        const content = eventData.content || "";
                         console.log("[SSE 응답 컨텐츠]", content);
+
+                        // Extract sender information if available
+                        lastSender = eventData.sender || Sender.BOT;
+                        console.log("[SSE 응답 발신자]", lastSender);
 
                         // Store content from this line
                         newContent = content;
@@ -118,7 +123,7 @@ export default function ChatClient() {
                         // Update message (not complete yet)
                         await handleMessageAction(
                           accumulatedText,
-                          Sender.BOT,
+                          lastSender,
                           messageId,
                           false
                         );
@@ -134,17 +139,17 @@ export default function ChatClient() {
                 if (accumulatedText) {
                   await handleMessageAction(
                     accumulatedText,
-                    Sender.BOT,
+                    lastSender, // Use the tracked sender
                     messageId,
                     true
                   );
                 } else {
                   // Use default response if no actual response
-                  let defaultAnswer =
+                  const defaultAnswer =
                     "I'll provide information about Seoul. Feel free to ask specific questions!";
                   await handleMessageAction(
                     defaultAnswer,
-                    Sender.BOT,
+                    Sender.BOT, // Default sender for fallback message
                     messageId,
                     true
                   );
@@ -217,7 +222,7 @@ export default function ChatClient() {
 
   const handleMessageAction = async (
     message: string,
-    sender: string,
+    sender: Sender,
     id?: string,
     isComplete: boolean = true
   ) => {

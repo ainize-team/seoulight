@@ -15,7 +15,7 @@ interface FormValues {
 interface ChatInputProps {
   handleMessageAction: (
     message: string,
-    sender: string,
+    sender: Sender,
     id?: string,
     isComplete?: boolean
   ) => Promise<void>;
@@ -130,7 +130,7 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
               const eventData = JSON.parse(dataContent);
 
               // Extract content based on server response structure
-              let content = eventData.content || "";
+              const content = eventData.content || "";
 
               // Handle "Echo:" response
               if (content.startsWith("Echo:")) {
