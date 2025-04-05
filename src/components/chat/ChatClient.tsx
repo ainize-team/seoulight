@@ -261,7 +261,7 @@ export default function ChatClient() {
       <div className="flex min-h-screen w-full flex-col">
         <div className="flex w-full flex-1 flex-col overflow-hidden">
           <ChatMessages messages={messages} />
-          <ChatInput handleMessageAction={handleMessageAction} />
+          <ChatInput />
         </div>
       </div>
     </ChatProvider>

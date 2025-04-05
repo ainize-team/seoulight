@@ -7,21 +7,15 @@ import StopIcon from "@/icons/StopIcon";
 import UpArrowIcon from "@/icons/UpArrowIcon";
 import { Sender } from "@/types/MessageType";
 import useChatStatus from "@/stores/chatStatus";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface FormValues {
   message: string;
 }
 
-interface ChatInputProps {
-  handleMessageAction: (
-    message: string,
-    sender: Sender,
-    id?: string,
-    isComplete?: boolean
-  ) => Promise<void>;
-}
+interface ChatInputProps {}
 
-export default function ChatInput({ handleMessageAction }: ChatInputProps) {
+export default function ChatInput() {
   const { register, handleSubmit, reset, watch } = useForm<FormValues>();
   const message = watch("message") || "";
   const { isLoading, setIsLoading, isStreaming, setIsStreaming } =
@@ -32,14 +26,22 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
       setIsStreaming: state.setIsStreaming
     }));
 
+  const { handleMessageAction } = useChatContext();
+
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const onSubmit = async (data: FormValues) => {
-    if (!data.message.trim()) return;
+    // 이미 메시지를 처리 중이면 중복 제출 방지
+    if (isLoading || isStreaming || !data.message.trim()) return;
+
+    console.log("Form submitted with message:", data.message);
 
     // Set loading state (before adding user message)
     setIsLoading(true);
     setIsStreaming(true);
+
+    // 입력 필드 초기화 (가능한 빨리 사용자에게 피드백 제공)
+    reset();
 
     // Create message ID outside try block so it's accessible in catch and finally
     const messageId = `bot-${Date.now()}`;
@@ -233,8 +235,6 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
       // Release loading state
       setIsLoading(false);
       setIsStreaming(false);
-      // Clear input field
-      reset();
     }
   };
 
@@ -252,8 +252,17 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
           placeholder="Type a message..."
           {...register("message", { required: true })}
           onKeyDown={(e) => {
+            // 한글 입력 중복 방지
             if (e.nativeEvent.isComposing) return;
-            if (e.key === "Enter" && message.trim()) {
+
+            // Enter 키를 누르고 로딩 중이 아니며 메시지가 비어있지 않을 때만 제출
+            if (
+              e.key === "Enter" &&
+              !isLoading &&
+              !isStreaming &&
+              message.trim()
+            ) {
+              e.preventDefault(); // 기본 폼 제출 방지하고 명시적으로 제출
               handleSubmit(onSubmit)();
             }
           }}
@@ -269,11 +278,10 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
           }`}
           onClick={(e) => {
             if (isStreaming) {
+              e.preventDefault();
               stopStreaming();
               setIsLoading(false);
               setIsStreaming(false);
-            } else if (message.trim()) {
-              handleSubmit(onSubmit)();
             }
           }}
         >
