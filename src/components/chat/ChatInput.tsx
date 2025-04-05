@@ -29,36 +29,36 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
 
   const onSubmit = async (data: FormValues) => {
     if (!data.message.trim()) return;
-    
+
     // 사용자 메시지를 먼저 표시
     handleMessageAction(data.message, Sender.USER);
-    
+
     // 로딩 상태 설정
     setIsLoading(true);
-    
+
     try {
-      // api/hyperagents API 호출
-      const response = await fetch("/api/hyperagents", {
-        method: "POST",
+      // localhost:8080 백엔드 서버 API 호출
+      console.log("🔥🔥🔥🔥🔥", data.message);
+      const response = await fetch("http://localhost:8080/api/hyperagents", {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: data.message }),
+          "Content-Type": "application/json"
+        }
       });
-      
+
       if (!response.ok) {
         throw new Error(`API 요청 실패: ${response.status}`);
       }
-      
+
       const result = await response.json();
-      
+
       // AI 응답을 표시
       handleMessageAction(result.response, Sender.BOT);
     } catch (error: any) {
       console.error("Error calling API:", error);
       // 에러 메시지 표시
       handleMessageAction(
-        `오류가 발생했습니다: ${error.message || "알 수 없는 오류"}`, 
+        `오류가 발생했습니다: ${error.message || "알 수 없는 오류"}`,
         Sender.BOT
       );
     } finally {
