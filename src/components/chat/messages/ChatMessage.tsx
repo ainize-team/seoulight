@@ -11,9 +11,11 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage({ message }: ChatMessageProps) {
-  if (message.sender !== Sender.USER) {
-    return <BotMessage message={message} />;
-  } else {
-    return <UserMessage message={message} />;
+  if (message.sender === Sender.USER || message.contents?.content.length > 0) {
+    if (message.sender !== Sender.USER) {
+      return <BotMessage message={message} />;
+    } else {
+      return <UserMessage message={message} />;
+    }
   }
 }
