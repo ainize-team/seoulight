@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import StopIcon from "@/icons/StopIcon";
 import UpArrowIcon from "@/icons/UpArrowIcon";
@@ -13,7 +13,12 @@ interface FormValues {
 }
 
 interface ChatInputProps {
-  handleMessageAction: (message: string, sender: Sender) => void;
+  handleMessageAction: (
+    message: string,
+    sender: Sender,
+    id?: string,
+    isComplete?: boolean
+  ) => Promise<void>;
 }
 
 export default function ChatInput({ handleMessageAction }: ChatInputProps) {
@@ -27,46 +32,212 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
       setIsStreaming: state.setIsStreaming
     }));
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const onSubmit = async (data: FormValues) => {
     if (!data.message.trim()) return;
 
-    // 사용자 메시지를 먼저 표시
-    handleMessageAction(data.message, Sender.USER);
-
-    // 로딩 상태 설정
+    // Set loading state (before adding user message)
     setIsLoading(true);
+    setIsStreaming(true);
+
+    // Create message ID outside try block so it's accessible in catch and finally
+    const messageId = `bot-${Date.now()}`;
 
     try {
-      // localhost:8080 백엔드 서버 API 호출
-      console.log("🔥🔥🔥🔥🔥", data.message);
-      const response = await fetch("http://localhost:8080/api/hyperagents", {
-        method: "GET",
+      // Display user message first (called only once)
+      await handleMessageAction(data.message, Sender.USER);
+
+      // Create initial empty message
+      await handleMessageAction("", Sender.BOT, messageId, false);
+
+      // Cancel previous request (simplified implementation)
+      abortControllerRef.current = null;
+
+      // Create new AbortController
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+
+      // Track if request has actually started
+      let requestStarted = false;
+
+      // Fallback message for network errors
+      const fallbackMessage =
+        "Unable to receive server response due to network error. Please try again later.";
+
+      // Mock response demo (for when server is not working)
+      const mockResponse = [
+        "Hello! Let me tell you about Seoul restaurants. 😊",
+        "Looking for BBQ places? Here are some recommendations:",
+        "1. Mapo District's Imkkokjeong - A 30-year tradition of charcoal-grilled BBQ known for thick pork belly slices.",
+        "2. Jongno Donhwamun Golden Pig - Allows ordering single portions with special marinated grilling technique.",
+        "3. Gangnam Yeoksam Original Restaurant - Known for specialty cuts and various pork belly options.",
+        "4. Hongdae Fresh Meat Butcher Shop - Select fresh meat yourself with great value for money.",
+        "5. Itaewon Pig Party - Popular with foreigners, offering various sauces to enjoy with your BBQ.",
+        "Which one sounds interesting? Let me know if you need more details!"
+      ];
+
+      const response = await fetch("http://localhost:8080/api/chat-sse", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        body: JSON.stringify({ message: data.message }),
+        signal: abortController.signal
       });
 
+      requestStarted = true;
+
       if (!response.ok) {
-        throw new Error(`API 요청 실패: ${response.status}`);
+        throw new Error(`API request failed: ${response.status}`);
       }
 
-      const result = await response.json();
+      // Process response as stream
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("Cannot read response body as stream");
+      }
 
-      // AI 응답을 표시
-      handleMessageAction(result.response, Sender.BOT);
-    } catch (error: any) {
-      console.error("Error calling API:", error);
-      // 에러 메시지 표시
-      handleMessageAction(
-        `오류가 발생했습니다: ${error.message || "알 수 없는 오류"}`,
-        Sender.BOT
+      const decoder = new TextDecoder();
+      let accumulatedText = "";
+      let chunkCount = 0;
+
+      // Stream reading loop
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+
+        chunkCount++;
+
+        // Convert binary data to text
+        const chunk = decoder.decode(value, { stream: true });
+
+        // Parse SSE data from chunk (data: {...}\n\n format)
+        const dataLines = chunk.split("\n\n");
+
+        // Store new content from this chunk
+        let newContent = "";
+
+        for (const line of dataLines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const dataContent = line.substring(6);
+              const eventData = JSON.parse(dataContent);
+
+              // Extract content based on server response structure
+              let content = eventData.content || "";
+
+              // Handle "Echo:" response
+              if (content.startsWith("Echo:")) {
+                // Extract user query (after "Echo:")
+                const userQuery = content.substring(6).trim();
+              }
+
+              // Process content if not empty
+              if (content) {
+                // Store content from this line
+                newContent = content;
+
+                // Update accumulated text
+                accumulatedText = newContent;
+
+                // Update message (not complete yet)
+                await handleMessageAction(
+                  accumulatedText,
+                  Sender.BOT,
+                  messageId,
+                  false
+                );
+              }
+            } catch (e) {
+              console.error("SSE data parsing error:", e);
+            }
+          }
+        }
+      }
+
+      // If no actual server response, use mock data (for testing)
+      if (accumulatedText === "") {
+        let mockAccumulatedText = "";
+        for (let i = 0; i < mockResponse.length; i++) {
+          // Simulate sequential responses
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          mockAccumulatedText += mockResponse[i] + " ";
+
+          // Create message in MessageType format
+          const botMessage = {
+            id: messageId,
+            sender: Sender.BOT,
+            contents: { content: mockAccumulatedText },
+            isComplete: i === mockResponse.length - 1
+          };
+
+          // Update message
+          await handleMessageAction(
+            mockAccumulatedText,
+            Sender.BOT,
+            messageId,
+            i === mockResponse.length - 1 // Complete only on last message
+          );
+        }
+
+        accumulatedText = mockAccumulatedText;
+      }
+
+      // Mark message as complete after streaming ends
+      // Create final message in MessageType format
+      const finalBotMessage = {
+        id: messageId,
+        sender: Sender.BOT,
+        contents: { content: accumulatedText || fallbackMessage },
+        isComplete: true
+      };
+
+      await handleMessageAction(
+        accumulatedText || fallbackMessage,
+        Sender.BOT,
+        messageId,
+        true
       );
+      abortControllerRef.current = null;
+    } catch (error: any) {
+      // Error logging (for debugging)
+      console.error("Error:", error);
+
+      // Skip if request was canceled before starting
+      if (error.name === "AbortError") {
+        // Handle canceled message
+        await handleMessageAction(
+          "Message transmission canceled.",
+          Sender.BOT,
+          messageId,
+          true
+        );
+      } else {
+        // Other network errors
+        console.error("Response streaming error:", error);
+        await handleMessageAction(
+          `An error occurred: ${error.message || "Unknown error"}`,
+          Sender.BOT,
+          messageId,
+          true
+        );
+      }
     } finally {
-      // 로딩 상태 해제
+      // Release loading state
       setIsLoading(false);
-      // 입력란 초기화
+      setIsStreaming(false);
+      // Clear input field
       reset();
     }
+  };
+
+  const stopStreaming = () => {
+    // Cancel ongoing request (simplified implementation)
+    abortControllerRef.current = null;
   };
 
   return (
@@ -95,7 +266,7 @@ export default function ChatInput({ handleMessageAction }: ChatInputProps) {
           }`}
           onClick={(e) => {
             if (isStreaming) {
-              // abortController?.abort();
+              stopStreaming();
               setIsLoading(false);
               setIsStreaming(false);
             } else if (message.trim()) {

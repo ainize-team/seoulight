@@ -4,21 +4,30 @@ import { Sender } from "@/types/MessageType";
 import React, { createContext, useContext } from "react";
 
 interface ChatContextValue {
-  handleMessageAction: (text: string, sender: Sender) => Promise<void>;
+  handleMessageAction: (
+    text: string,
+    sender: Sender,
+    id?: string,
+    isComplete?: boolean
+  ) => Promise<void>;
 }
 
-const ChatContext = createContext<ChatContextValue | undefined>(undefined);
+// Provide empty function as default value
+const defaultHandleMessageAction = async () => {};
 
-export const useChat = () => {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error("useChat must be used within a ChatProvider");
-  }
-  return context;
-};
+const ChatContext = createContext<ChatContextValue>({
+  handleMessageAction: defaultHandleMessageAction
+});
+
+export const useChatContext = () => useContext(ChatContext);
 
 interface ChatProviderProps {
-  handleMessageAction: (text: string, sender: Sender) => Promise<void>;
+  handleMessageAction: (
+    text: string,
+    sender: Sender,
+    id?: string,
+    isComplete?: boolean
+  ) => Promise<void>;
   children: React.ReactNode;
 }
 

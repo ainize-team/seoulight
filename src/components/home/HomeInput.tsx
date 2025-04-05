@@ -21,7 +21,7 @@ export default function HomeInput() {
   const message = watch("message") || "";
 
   const onSubmit = (data: FormValues) => {
-    console.log(data.message);
+    // console.log(data.message);
   };
   const config: WormholeConnectConfig = {
     network: "Testnet",
@@ -47,16 +47,6 @@ export default function HomeInput() {
     mode: "light",
     primary: "#78c4b6"
   };
-  const init = async () => {
-    const wh = await wormhole("Testnet", [solana]);
-    console.log(wh);
-  };
-
-  useEffect(() => {
-    init();
-    console.log(process.env.NEXT_PUBLIC_ETH_RPC);
-    console.log(process.env.NEXT_PUBLIC_SOL_RPC);
-  }, []);
 
   return (
     <div className="w-full">
@@ -78,7 +68,7 @@ export default function HomeInput() {
         <input
           type="text"
           className="absolute inset-0 h-full w-full pb-3 pl-4 pr-12 pt-2 text-[15px] text-[#302f2a] outline-none placeholder:font-normal placeholder:text-[#8c8c8c]"
-          placeholder="Ask anything. I’ll light the way."
+          placeholder="Ask anything. I'll light the way."
           {...register("message")}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

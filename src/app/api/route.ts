@@ -17,8 +17,6 @@ export async function POST(request: Request) {
     const data = await request.json();
     const { message, sender } = data;
 
-    console.log(`Received message from ${sender}: ${message}`);
-
     return NextResponse.json({
       status: "success",
       message: "Message received"

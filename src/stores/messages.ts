@@ -1,4 +1,9 @@
-import { MessageType } from "@/types/MessageType";
+import {
+  MessageType,
+  Sender,
+  BotMessageType,
+  UserMessageType
+} from "@/types/MessageType";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -7,16 +12,42 @@ type Status = {
 };
 
 type Action = {
-  addMessages: (value: boolean) => void;
+  setMessages: (
+    value: MessageType[] | ((prev: MessageType[]) => MessageType[])
+  ) => void;
+  addMessage: (message: MessageType) => void;
+  updateBotMessage: (id: string, content: string, isComplete: boolean) => void;
 };
 
 const useMessages = create(
   immer<Status & Action>((set) => ({
     messages: [],
-    addMessages: (value: boolean) => {
+    setMessages: (value) => {
+      set((state) => {
+        return {
+          messages: typeof value === "function" ? value(state.messages) : value
+        };
+      });
+    },
+    addMessage: (message: MessageType) => {
       set((state) => ({
-        messages: [...state.messages, value]
+        messages: [...state.messages, message]
       }));
+    },
+    updateBotMessage: (id, content, isComplete) => {
+      set((state) => {
+        const updatedMessages = state.messages.map((message) => {
+          if (message.id === id && message.sender === Sender.BOT) {
+            return {
+              ...message,
+              contents: { content },
+              isComplete
+            };
+          }
+          return message;
+        });
+        return { messages: updatedMessages };
+      });
     }
   }))
 );

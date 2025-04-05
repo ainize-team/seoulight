@@ -28,8 +28,8 @@ app.get("/api/hyperagents", (req: Request, res: Response) => {
         process.env.GOOGLE_API_KEY ? "Found" : "Not found"
       );
 
-      // 요청 본문에서 메시지 추출
-      // const { message } = req.body;
+      // 클라이언트가 보낸 메시지 추출
+      const userMessage = req.body.message;
 
       // if (!message) {
       //   return res.status(400).json({ error: "Message is required" });
