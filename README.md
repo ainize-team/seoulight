@@ -2,6 +2,10 @@
 
 **Seoulight** eliminates language barriers, cultural confusion, and payment complications for international travelers while creating new opportunities for local businesses through blockchain and AI technologies.
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/cdbae007-98ca-4ae6-99d8-e5e5139ea1ee" alt="pt0" width="60%">
+</div>
+
 ---
 
 ## 🌍 Problem
