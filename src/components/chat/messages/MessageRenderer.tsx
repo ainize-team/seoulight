@@ -19,7 +19,7 @@ export default function MessageRenderer({ message }: Props) {
   const parts = contentStr.split(urlTagRegex).filter(Boolean);
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className={"flex w-full flex-col"}>
       {parts.map((part, index) => {
         return <MarkdownRenderer key={index} markdownText={part} />;
       })}

@@ -2,6 +2,10 @@
 
 **Seoulight** eliminates language barriers, cultural confusion, and payment complications for international travelers while creating new opportunities for local businesses through blockchain and AI technologies.
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/cdbae007-98ca-4ae6-99d8-e5e5139ea1ee" alt="pt0" width="60%">
+</div>
+
 ---
 
 ## 🌍 Problem
@@ -17,12 +21,20 @@ Meanwhile, local businesses struggle to connect with international visitors due 
 
 ## 💡 Our Solution: The Seoulight Advantage
 
-Seoulight combines AI-powered local expertise with Solana blockchain technology to create a seamless travel experience::
+Seoulight combines AI-powered local expertise with Solana blockchain technology to create a seamless travel experience.
 
 - **🧠 AI-Powered Expert Network**: Specialized AI agents with deep knowledge of local culture, food, attractions, and logistics
 - **💳 Solana Payment System**: Universal payment solution eliminating currency exchange headaches
 - **📡 Model Context Protocol (MCP)**: Real-time access to accurate local information
 - **🔗 Multi-chain Compatibility**: Flexibility through Wormhole integration
+
+</br>
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=9lsHek0thSw" target="_blank">
+    <img src="https://img.youtube.com/vi/9lsHek0thSw/0.jpg" alt="YouTube Video Thumbnail" width="600" height="340" border="10" />
+  </a>
+  <p>Click to watch on YouTube</p>
+</div>
 
 ---
 

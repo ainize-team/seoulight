@@ -4,12 +4,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 
-import WormholeConnect, {
-  WormholeConnectConfig,
-  WormholeConnectTheme
-} from "@wormhole-foundation/wormhole-connect";
-import { wormhole } from "@wormhole-foundation/sdk";
-import solana from "@wormhole-foundation/sdk/solana";
 import UpArrowIcon from "@/icons/UpArrowIcon";
 
 interface FormValues {
@@ -21,46 +15,11 @@ export default function HomeInput() {
   const message = watch("message") || "";
 
   const onSubmit = (data: FormValues) => {
-    console.log(data.message);
+    // console.log(data.message);
   };
-  const config: WormholeConnectConfig = {
-    network: "Testnet",
-    chains: [
-      "Solana",
-      "Sepolia",
-      "BaseSepolia",
-      "ArbitrumSepolia",
-      "Ethereum",
-      "OptimismSepolia"
-    ],
-    rpcs: {
-      Sepolia: process.env.NEXT_PUBLIC_ETH_RPC,
-      Ethereum: process.env.NEXT_PUBLIC_ETH_RPC,
-      Solana: process.env.NEXT_PUBLIC_SOL_RPC
-    },
-    ui: {
-      title: "ArbitUumSepoliaI CoBasenepnei TS Demo"
-    }
-  };
-
-  const theme: WormholeConnectTheme = {
-    mode: "light",
-    primary: "#78c4b6"
-  };
-  const init = async () => {
-    const wh = await wormhole("Testnet", [solana]);
-    console.log(wh);
-  };
-
-  useEffect(() => {
-    init();
-    console.log(process.env.NEXT_PUBLIC_ETH_RPC);
-    console.log(process.env.NEXT_PUBLIC_SOL_RPC);
-  }, []);
 
   return (
     <div className="w-full">
-      {/* <WormholeConnect config={config} theme={theme} /> */}
       <p className="justify-center py-4 text-center font-['Noto_Sans_KR'] text-sm font-medium leading-relaxed text-[#21242e]">
         SeouLight
       </p>
@@ -78,7 +37,7 @@ export default function HomeInput() {
         <input
           type="text"
           className="absolute inset-0 h-full w-full pb-3 pl-4 pr-12 pt-2 text-[15px] text-[#302f2a] outline-none placeholder:font-normal placeholder:text-[#8c8c8c]"
-          placeholder="무엇이든 물어보세요."
+          placeholder="Ask anything. I'll light the way."
           {...register("message")}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

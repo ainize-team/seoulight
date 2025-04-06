@@ -37,7 +37,6 @@ export async function getSigner<N extends Network, C extends Chain>(
 }> {
   let signer: Signer;
   const platform = chain.platform.utils()._platform;
-  console.log(getEnv("SOL_PRIVATE_KEY"));
   switch (platform) {
     case "Solana":
       signer = await (

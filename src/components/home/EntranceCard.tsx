@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import useChatStatus from "@/stores/chatStatus";
 
 import { agentImage } from "@/constants/agentImage";
 
@@ -20,8 +21,14 @@ export default function EntranceCard({
   imageUrl,
   userMessage
 }: EntranceCardProps) {
+  const { setIsLoading, setIsStreaming } = useChatStatus();
+
   const handleCardClick = () => {
-    sessionStorage.setItem("chatInput", userMessage);
+    sessionStorage.setItem("chatInput", title);
+
+    // Reset the loading status when navigating to chat
+    setIsLoading(false);
+    setIsStreaming(false);
   };
 
   return (
